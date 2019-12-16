@@ -1,0 +1,29 @@
+{
+  "name": "jest-cucumber-fusion",
+  "version": "1.0.0",
+  "description": "Write cucumber test as part of a jest run (including coverage)",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --color"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/b-yond-infinite-network/jest-cucumber-fusion.git"
+  },
+  "keywords": [
+    "jest",
+    "cucumber",
+    "BDD",
+    "gherkin"
+  ],
+  "dependencies": {
+    "jest-cucumber": "^2.0.11"
+  },
+  "devDependencies": {},
+  "author": "B-Yond",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/b-yond-infinite-network/jest-cucumber-fusion/issues"
+  },
+  "homepage": "https://github.com/b-yond-infinite-network/jest-cucumber-fusion#readme"
+}
