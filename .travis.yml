@@ -3,5 +3,6 @@ language:
 install:
   - npm install -g codecov
 script:
+  - npm install
   - npm test
   - codecov
