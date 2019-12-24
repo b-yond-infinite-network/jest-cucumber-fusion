@@ -2,24 +2,24 @@
 
 Write 'pure' cucumber test in Jest without syntax clutter 
 
-[![Build Status](https://travis-ci.com/b-yond-infinite-network/infinity-scripting.svg?token=sqPtR1VpUDp2Kdz2PxNw&branch=master)](https://travis-ci.com/b-yond-infinite-network/infinity-scripting)
-[![Codecov](https://codecov.io/gh/b-yond-infinite-network/infinity-scripting/branch/master/graph/badge.svg?token=Elub4pCrMM)](https://codecov.io/gh/b-yond-infinite-network/infinity-scripting)
-[![npm downloads](https://img.shields.io/npm/dm/jest-cucumber-fusion.svg?style=flat-square)](https://www.npmjs.com/package/jest-cucumber-fusion)
+[![Build Status](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/test-local/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/test-local/)
+[![Codecov](https://codecov.io/gh/b-yond-infinite-network/jest-cucumber-fusion/branch/master/graph/badge.svg)](https://codecov.io/gh/b-yond-infinite-network/jest-cucumber-fusion)
+[![npm downloads](https://img.shields.io/npm/dm/jest-cucumber-fusion?style=flat-square)](https://www.npmjs.com/package/jest-cucumber-fusion)
 
 
 ## Overview
 Build on top of [Jest-cucumber](https://github.com/bencompton/jest-cucumber), Jest-Cucumber-Fusion handle the writing of the corresponding Jest test steps using an uncluttered cucumber style.
 Instead of using `describe` and `it` blocks, you instead write a Jest test for each scenario, and then define `Given`, `When`, and `Then` step definitions inside of your Jest tests. 
-jest-cucumber-fusion then allows you to link these Cucumber tests to your javascript Cucumber feature steps.
-Adding `Fusion`, jest-cucumber-fusion then make the links between and build the necessary scaffolding for jest-cucumber to do its job.
-Now allowed to use jest naturally in your project like you would use native Cucumber.
+Jest-Cucumber-Fusion then allows you to link these Cucumber tests to your javascript Cucumber feature steps.
+Adding a `Fusion`call, the links between your Feature definition and your Steps definition is handled automatically and the necessary scaffolding for jest-cucumber is build behind the scene.
+Now use jest naturally in your project like you would use the native Cucumber library.
 
 ## Motivation
 
 Jest-cucumber is an amazing project but forces you to write a lot of repetitive scaffolding code to setup the link betwen Jest and Cucumber.
 With Jest-Cucumber-Fusion, it really takes only the minimal code possible:
  - a Cucumber Feature file with gherkin sentences
- - a Cucumber Feature step file with your javascript validation code, ended with the `Fusion` function to link the two
+ - a Cucumber Step definition file with your javascript validation code, ended with the `Fusion` function to link the two
 
 
 
@@ -52,7 +52,7 @@ Scenario: Launching a SpaceX rocket
 ```
 
 
-### Add a your Cucumber feature step definition file and load Fusion
+### Add a your Cucumber Step definition file and load Fusion
 ```javascript
 //filename: rocket-launching.steps.js
 const { Given, When, Then, And, But, Fusion } = require( 'jest-cucumber-fusion' )
@@ -70,7 +70,7 @@ let rocket
 
 ```
 
-### Add step definitions to your scenario Jest tests:
+### Add steps definitions:
 
 ```javascript
 //filename: rocket-launching.steps.js
@@ -100,7 +100,7 @@ But( 'nobody should doubt me ever again', () => {
 } )
 ```
 
-### Adding the Fusion() call at the end of your Cucumber feature step
+### Adding the Fusion() call at the end of the Step definition file
 You have to match it with your Cucumber Feature definition file:
 ```javascript
 //filename: rocket-launching.steps.js
