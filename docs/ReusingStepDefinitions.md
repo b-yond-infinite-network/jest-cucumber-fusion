@@ -60,10 +60,10 @@ Scenario: Reusing a SpaceX rocket
 ```
 
 
-You will now need to encapsulate the variables in an accessor function and pass the accessor to you the constructor/init of your file
+You will now need to encapsulate the variables in an accessor function and pass the accessor to the constructor/init of your file
 ```javascript
 // reuse-rocket.steps.js
-const { Given, Fusion } = require( '../../../../src' )
+const { Given, Fusion } = require( 'jest-cucumber-fusion' )
 
 const { Rocket } = require( '../../../src/rocket' )
 
@@ -77,14 +77,14 @@ Given( 'I am Elon Musk and I launched a rocket in space already', () => {
 } )
 
 
-const vlaue = require( './reuse-code' )( getCurrentRocket )
+require( './reuse-code' )( getCurrentRocket )
 
 
 Fusion( '../reuse-definition.feature' )
 ```
 
 
-Inside you shared step file, take care to call the accessor inside your test step function
+Inside you shared step file, be carefulle to call the accessor inside your test step function not outside
 ```javascript
 // reuse-code.js
 const { When, Then, And } = require( '../../../../src' )
