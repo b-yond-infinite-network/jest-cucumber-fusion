@@ -45,37 +45,12 @@ Scenario: Launching a SpaceX rocket
   And nobody should doubt me ever again
 ```
 
-### Add the following to your Jest configuration:
+### Add the following to your package.json configuration:
 
-```javascript  
-  "testMatch": [
-    "**/*.steps.js"
-  ],
-```
-
-Or if you don't have a jest configuration already, at the first-level element of your package.json:
 ```javascript
-"jest": {
-    "testMatch": [
-      "**/*.steps.js"
-    ]
-    "
+"jest": { "testMatch": [ "**/*.steps.js" ] }
 ```
 
-Or if you want full coverage report (to use in your CI, for example)
-```javascript
-"jest": {
-    "testMatch": [
-      "**/*.steps.js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/"
-    ],
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true
-  }
-```
 
 ### Add a your Cucumber feature step definition file and load Fusion
 ```javascript
@@ -158,7 +133,23 @@ But( 'nobody should doubt me ever again', () => {
 Fusion( 'rocket-launching.feature' )
 ```
 
+## Adding coverage
+Since we're using jest, it is very easy to generate the code coverage of your Cucumber test:
+```javascript
+"jest": {
+    "testMatch": [
+      "**/*.steps.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
+  }
+```
 
+ 
 ## Additional Documentation 
 
   * [Gherkin tables](./docs/GherkinTables.md)
