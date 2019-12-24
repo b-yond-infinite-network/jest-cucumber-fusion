@@ -1,6 +1,6 @@
-const { Given, When, Then, And, But, Fusion } = require( '../../../src' )
+const { Given, When, Then, And, But, Fusion } = require( '../../../../src' )
 
-const { Rocket } = require( '../../src/rocket' )
+const { Rocket } = require( '../../../src/rocket' )
 
 let rocket
 
@@ -25,4 +25,4 @@ But( 'nobody should doubt me ever again', () => {
 } )
 
 
-Fusion( '../features/basic-scenarios.feature' )
+Fusion( '../basic-scenarios.feature' )

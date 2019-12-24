@@ -1,6 +1,6 @@
-const { Before, After, Given, When, Then, Fusion } = require( '../../../src' )
+const { Before, After, Given, When, Then, Fusion } = require( '../../../../src' )
 
-const { TodoList } = require( '../../src/todo-list' )
+const { TodoList } = require( '../../../src/todo-list' )
 
 let todoList
 
@@ -36,4 +36,4 @@ After( () => {
     emptyTodo.add( { name: 'Empty on purpose', priority: 'so low' } )
 } )
 
-Fusion( '../features/using-gherkin-tables.feature' )
+Fusion( '../using-gherkin-tables.feature' )

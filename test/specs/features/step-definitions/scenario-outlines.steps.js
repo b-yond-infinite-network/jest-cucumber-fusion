@@ -1,6 +1,6 @@
-const { Before, Given, When, Then, Fusion } = require( '../../../src' )
+const { Before, Given, When, Then, Fusion } = require( '../../../../src' )
 
-const { OnlineSales } = require( '../../src/online-sales' )
+const { OnlineSales } = require( '../../../src/online-sales' )
 
 let onlineSales
 let salesPrice
@@ -20,4 +20,4 @@ Then( /^I should get \$(\d+)$/, expectedSalesPrice => {
 } )
 
 
-Fusion( '../features/scenario-outlines.feature' )
+Fusion( '../scenario-outlines.feature' )

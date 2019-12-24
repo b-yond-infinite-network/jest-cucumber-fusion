@@ -1,6 +1,6 @@
-const { Before, Given, When, Then, Fusion } = require( '../../../src' )
+const { Before, Given, When, Then, Fusion } = require( '../../../../src' )
 
-const { BankAccount } = require( '../../src/bank-account' )
+const { BankAccount } = require( '../../../src/bank-account' )
 
 let myAccount
 		
@@ -18,4 +18,4 @@ Then(/^my account balance should be \$(\d+)$/, expectedBalance => {
     expect(myAccount.balance).toBe(parseInt(expectedBalance))
 } )
 
-Fusion( '../features/using-dynamic-values.feature' )
+Fusion( '../using-dynamic-values.feature' )

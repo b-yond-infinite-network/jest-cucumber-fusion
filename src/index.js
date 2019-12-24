@@ -37,7 +37,7 @@ function But( regexpSentence, fnForDefinition ){
 function Before( fnDefinition ){ stepsDefinition.before = fnDefinition }
 function After( fnDefinition ){ stepsDefinition.after = fnDefinition }
 
-function Fusion( featureFileToLoad ) {
+function Fusion( featureFileToLoad, optionsToPassToJestCucumber ) {
     const path          = require( 'path' )
     const callerSites   = require("callsites" )
     const callerSiteCaller = callerSites.default()[ 1 ].getFileName()
@@ -45,7 +45,7 @@ function Fusion( featureFileToLoad ) {
     const absoluteFeatureFilePath = path.resolve( dirOfCaller, featureFileToLoad )
 
     const jestCucumber  = require( 'jest-cucumber' )
-    const feature       = jestCucumber.loadFeature( absoluteFeatureFilePath )
+    const feature       = jestCucumber.loadFeature( absoluteFeatureFilePath, optionsToPassToJestCucumber )
 
     jestCucumber.defineFeature( feature, testFn => {
 
@@ -186,7 +186,6 @@ function findStep( scenarioType, scenarioSentence ) {
 // }
 
 
-// module.exports.steps = stepsDefinition
 module.exports.Before       = Before
 module.exports.After        = After
 module.exports.Given        = Given
