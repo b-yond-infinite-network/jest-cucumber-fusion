@@ -23,6 +23,7 @@ const { Given, Fusion } = require( 'jest-cucumber-fusion' )
 
 Given( 'I am Elon Musk and I launched a rocket in space already', () => {
 	const hasLaunchedARocket = true
+    expect( hasLaunchedARocket ).toBe( true )
 } )
 
 ///
@@ -41,6 +42,7 @@ const { Then } = require( 'jest-cucumber-fusion' )
 
 Then( 'I\'m happy', () => {
 	const localHappy = true
+    expect( localHappy ).toBe( true )
 } )
 ```
 
@@ -91,6 +93,7 @@ const { When, Then, And } = require( 'jest-cucumber-fusion' )
 
 And( 'I drop my mic', () => {
 	const micDropped = true
+    expect( micDropped ).toBe( true )
 } )
 
 module.exports = exports = function( fnRocket ) {
