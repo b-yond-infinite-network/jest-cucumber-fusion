@@ -22,7 +22,7 @@ const { Given, Fusion } = require( 'jest-cucumber-fusion' )
 
 
 Given( 'I am Elon Musk and I launched a rocket in space already', () => {
-	const hasLaunchedARocket = true
+    const hasLaunchedARocket = true
     expect( hasLaunchedARocket ).toBe( true )
 } )
 
@@ -41,7 +41,7 @@ Place you shared step definitions in a shared step definition file, jest-cucumbe
 const { Then } = require( 'jest-cucumber-fusion' )
 
 Then( 'I\'m happy', () => {
-	const localHappy = true
+    const localHappy = true
     expect( localHappy ).toBe( true )
 } )
 ```
@@ -91,20 +91,20 @@ Inside you shared step file, be carefulle to call the accessor inside your test 
 // reuse-code.js
 const { When, Then, And } = require( 'jest-cucumber-fusion' )
 
-And( 'I drop my mic', () => {
-	const micDropped = true
+And( 'I drop my mic', () => {  
+    const micDropped = true
     expect( micDropped ).toBe( true )
 } )
 
 module.exports = exports = function( fnRocket ) {
 	When( 'I relaunch the rocket', () => {
-		const rocketUsed = fnRocket()
-		rocketUsed.launch()
+            const rocketUsed = fnRocket()
+            rocketUsed.launch()
 	} )
 	
 	Then( 'the rocket end up in space again', () => {
-		const rocketUsed = fnRocket()
-		expect( rocketUsed.isInSpace ).toBe(true)
+            const rocketUsed = fnRocket()
+            expect( rocketUsed.isInSpace ).toBe(true)
 	} )
 }
 ```
