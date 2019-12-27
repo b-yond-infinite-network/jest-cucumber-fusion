@@ -117,10 +117,23 @@ function findStep( scenarioType, scenarioSentence ) {
     const foundStep = Object.keys( stepsDefinition[ scenarioType ] ).find( ( currentSentence ) => {
         if( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp ){
             if( /<.*>/.test( scenarioSentence ) ){
-                const numGroupInStepDef = new RegExp( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp.source + '|' ).exec('').length - 1
-                const numGroupInSentence = /(<[\w]*>)|/gm.exec( scenarioSentence ).length - 1
+                const cleanedSentence = scenarioSentence.replace( /<[\w]*>/gi, '' )
+                const cleanedRegexp = stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp.source
+                                                                                        .replace( /^\^/, '' )
+                                                                                        .replace( /\\\(/g, '(' )
+                                                                                        .replace( /\\\)/g, ')')
+                                                                                        .replace( /\\\^/g, '^')
+                                                                                        .replace( /\\\$/g, '$')
+                                                                                        .replace( /\$$/, '' )
+                                                                                        .replace( /\([.\\]+[sSdDwWbB*][*?+]?\)/g, '')
+                                                                                        .replace( /\(\[.*\](?:[+?*]{1}|\{\d\})\)/g, '' )
+                
+                // const groupInStepDef = new RegExp( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp.source + '|' ).exec('')
+                // const numGroupInStepDef = groupInStepDef.length - 1
+                // const groupInSentence = /(<[\w]*>)|/gm.exec( scenarioSentence )
+                // const numGroupInSentence = /(<[\w]*>)|/gm.exec( scenarioSentence ).length - 1
                 //check that we have the same number of capture group than enclosed variables in the expression
-                return numGroupInSentence === numGroupInStepDef
+                return cleanedRegexp === cleanedSentence
             }
 
             else

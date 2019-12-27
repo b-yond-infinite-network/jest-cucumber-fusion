@@ -19,5 +19,17 @@ Then( /^I should get \$(\d+)$/, expectedSalesPrice => {
     expect(salesPrice).toBe(parseInt(expectedSalesPrice))
 } )
 
+Given( /^I want to sell all my (.*)$/, item => {
+    onlineSales.listItem(item)
+} )
+
+When( /^I sell all my (.*) at the price of \$(\d+)$/, ( item, expectedSalesPrice ) => {
+    salesPrice = onlineSales.sellItem(item)
+} )
+
+Then( /^I should still get \$(\d+)$/, expectedSalesPrice => {
+    expect(salesPrice).toBe(parseInt(expectedSalesPrice))
+} )
+
 
 Fusion( '../scenario-outlines.feature' )
