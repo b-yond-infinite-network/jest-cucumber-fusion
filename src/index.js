@@ -17,21 +17,39 @@ function addDefinitionFunction( definitionType, regexpSentence, fnForDefinition 
     }
 }
 
-function Given( regexpSentence, fnForDefinition ){
-    addDefinitionFunction( "given", regexpSentence, fnForDefinition )
+function Given( regexpSentenceOrChainedObject, fnForDefinition ){
+    return defineAndChain( "given", regexpSentenceOrChainedObject, fnForDefinition )
 }
-function When( regexpSentence, fnForDefinition ){
-    addDefinitionFunction( "when", regexpSentence, fnForDefinition )
+function When( regexpSentenceOrChainedObject, fnForDefinition ){
+    return defineAndChain( "when", regexpSentenceOrChainedObject, fnForDefinition )
 }
-function Then( regexpSentence, fnForDefinition ){
-    addDefinitionFunction( "then", regexpSentence, fnForDefinition )
+function Then( regexpSentenceOrChainedObject, fnForDefinition ){
+    return defineAndChain( "then", regexpSentenceOrChainedObject, fnForDefinition )
 }
-function And( regexpSentence, fnForDefinition ){
-    addDefinitionFunction( "and", regexpSentence, fnForDefinition )
+function And( regexpSentenceOrChainedObject, fnForDefinition ){
+    return defineAndChain( "and", regexpSentenceOrChainedObject, fnForDefinition )
 }
 
-function But( regexpSentence, fnForDefinition ){
-    addDefinitionFunction( "but", regexpSentence, fnForDefinition )
+function But( regexpSentenceOrChainedObject, fnForDefinition ){
+    return defineAndChain( "but", regexpSentenceOrChainedObject, fnForDefinition )
+}
+
+function defineAndChain( stepType, stepObjectOrSentence, fnForStep ){
+    if( !fnForStep
+        && stepObjectOrSentence instanceof Object
+        && Object.prototype.toString.call( stepObjectOrSentence ) !== '[object RegExp]'
+        && stepObjectOrSentence.stepSentence ){
+        addDefinitionFunction( stepType,
+                               stepObjectOrSentence.stepSentence,
+                               stepObjectOrSentence.stepFnDefinition )
+        
+        return stepObjectOrSentence
+    }
+    
+    addDefinitionFunction( stepType, stepObjectOrSentence, fnForStep )
+    
+    return {    stepSentence: stepObjectOrSentence,
+                stepFnDefinition: fnForStep }
 }
 
 function Before( fnDefinition ){ stepsDefinition.before = fnDefinition }
