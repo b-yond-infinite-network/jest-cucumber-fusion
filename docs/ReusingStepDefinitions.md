@@ -86,7 +86,7 @@ Fusion( '../reuse-definition.feature' )
 ```
 
 
-Inside you shared step file, be carefulle to call the accessor inside your test step function not outside
+Inside you shared step file, be careful to call the accessor inside your test step function not outside
 ```javascript
 // reuse-code.js
 const { When, Then, And } = require( 'jest-cucumber-fusion' )

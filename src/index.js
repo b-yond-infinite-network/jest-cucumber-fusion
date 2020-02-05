@@ -71,36 +71,36 @@ function Fusion( featureFileToLoad, optionsToPassToJestCucumber ) {
             matchJestTestSuiteWithCucumberFeature( feature.scenarios, beforeEach, afterEach, testFn )
 
         if( feature.scenarioOutlines.length > 0 )
-            matchJestTestSuiteWithCucumberFeature( feature.scenarioOutlines, beforeEach, afterEach, testFn )
+            matchJestTestSuiteWithCucumberFeature( feature.scenarioOutlines, beforeEach, afterEach, testFn, true )
     } )
 }
 
-function matchJestTestSuiteWithCucumberFeature( featureScenariosOrOutline, beforeEachFn, afterEachFn, testFn ){
+function matchJestTestSuiteWithCucumberFeature( featureScenariosOrOutline, beforeEachFn, afterEachFn, testFn, isOutline ){
     featureScenariosOrOutline.forEach( ( currentScenarioOrOutline )  => {
 
         if( stepsDefinition.before )
             beforeEachFn( stepsDefinition.before )
 
-        matchJestTestWithCucumberScenario( currentScenarioOrOutline.title, currentScenarioOrOutline.steps, testFn )
+        matchJestTestWithCucumberScenario( currentScenarioOrOutline.title, currentScenarioOrOutline.steps, testFn, isOutline )
     
         if( stepsDefinition.after )
             afterEachFn( stepsDefinition.after )
     } )
 }
 
-function matchJestTestWithCucumberScenario( currentScenarioTitle, currentScenarioSteps, testFn ){
+function matchJestTestWithCucumberScenario( currentScenarioTitle, currentScenarioSteps, testFn, isOutline ){
     testFn( currentScenarioTitle, ( { given, when, then, and, but } ) => {
         currentScenarioSteps.forEach( ( currentStep ) => {
             // if( !stepsDefinition[ currentStep.keyword ] )
             //     return
 
-            matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStep.keyword, currentStep.stepText )
+            matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStep.keyword, currentStep.stepText, isOutline )
         } )
     } )
 }
 
-function matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStepKeyWork, currentStepText ){
-    const foundMatchingStep = findStep( currentStepKeyWork, currentStepText )
+function matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStepKeyWork, currentStepText, isOutline ){
+    const foundMatchingStep = findStep( currentStepKeyWork, currentStepText, isOutline )
     if( !foundMatchingStep )
         return
 
@@ -128,13 +128,13 @@ function matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, c
     }
 }
 
-function findStep( scenarioType, scenarioSentence ) {
+function findStep( scenarioType, scenarioSentence, isOutline ) {
     // if( !stepsDefinition[ scenarioType ] )
     //     return null
 
     const foundStep = Object.keys( stepsDefinition[ scenarioType ] ).find( ( currentSentence ) => {
         if( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp ){
-            if( /<.*>/.test( scenarioSentence ) ){
+            if( isOutline && /<[\w]*>/.test( scenarioSentence ) ){
                 const cleanedSentence = scenarioSentence.replace( /<[\w]*>/gi, '' )
                 const cleanedRegexp = stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp.source
                                                                                         .replace( /^\^/, '' )
