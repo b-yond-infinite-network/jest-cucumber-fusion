@@ -2,7 +2,7 @@
 
 Write 'pure' cucumber test in Jest without syntax clutter 
 
-[![Build Status](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/Integration/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/actions?query=workflow%3APublish)
+[![Build Status](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/Continuous%20Integration/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/actions?query=workflow%3AIntegration)
 [![Codecov](https://codecov.io/gh/b-yond-infinite-network/jest-cucumber-fusion/branch/master/graph/badge.svg)](https://codecov.io/gh/b-yond-infinite-network/jest-cucumber-fusion)
 [![Publish](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/Publish/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/actions?query=workflow%3APublish)
 
