@@ -8,7 +8,7 @@ on:
       - 'releases/*'
 
 jobs:
-  test:
+  integration:
     runs-on: ubuntu-latest
     steps:
     - name: Checking code

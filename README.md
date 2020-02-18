@@ -2,9 +2,12 @@
 
 Write 'pure' cucumber test in Jest without syntax clutter 
 
-[![Build Status](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/test-local/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/test-local/)
+[![Build Status](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/Integration/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/actions?query=workflow%3APublish)
 [![Codecov](https://codecov.io/gh/b-yond-infinite-network/jest-cucumber-fusion/branch/master/graph/badge.svg)](https://codecov.io/gh/b-yond-infinite-network/jest-cucumber-fusion)
-[![npm downloads](https://img.shields.io/npm/dm/jest-cucumber-fusion?style=flat-square)](https://www.npmjs.com/package/jest-cucumber-fusion)
+[![Publish](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/workflows/Publish/badge.svg)](https://github.com/b-yond-infinite-network/jest-cucumber-fusion/actions?query=workflow%3APublish)
+
+[![npm downloads](https://img.shields.io/npm/dm/jest-cucumber-fusion)](https://www.npmjs.com/package/jest-cucumber-fusion)
+[![npm latest](https://img.shields.io/npm/v/jest-cucumber-fusion/latest.svg)](https://www.npmjs.com/package/jest-cucumber-fusion)
 
 
 ## Overview
