@@ -1,10 +1,13 @@
 {
   "name": "jest-cucumber-fusion",
-  "version": "0.6.1",
+  "version": "0.0.0-semantically-released",
   "description": "Write cucumber test as part of a jest run (including coverage)",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --color"
+    "test": "jest --color",
+    "coverage": "codecov",
+    "commit": "git-cz",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
@@ -20,6 +23,42 @@
     "callsites": "^3.1.0",
     "jest-cli": "^24.9.0",
     "jest-cucumber": "^2.0.11"
+  },
+  "devDependencies": {
+    "codecov": "^4.0.0-0",
+    "cz-conventional-changelog": "^3.1.0",
+    "semantic-release": "^17.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            "dist/**"
+          ]
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true
+        }
+      ]
+    ],
+    "parserOpts": {
+      "mergePattern": "Merged PR .*:"
+    }
   },
   "author": "B-Yond",
   "license": "Apache-2.0",
