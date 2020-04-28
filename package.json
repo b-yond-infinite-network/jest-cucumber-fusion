@@ -3,6 +3,7 @@
   "version": "0.0.0-semantically-released",
   "description": "Write cucumber test as part of a jest run (including coverage)",
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "test": "jest --color",
     "coverage": "codecov",
