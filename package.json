@@ -41,18 +41,15 @@
   "release": {
     "plugins": [
       "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      [
-        "@semantic-release/github",
-        {
-          "assets": [
-            "dist/**"
-          ]
+      [ "@semantic-release/release-notes-generator", {
+          "preset": "atom"
         }
       ],
-      [
-        "@semantic-release/npm",
-        {
+      ["@semantic-release/github", {
+          "assets": [ "dist/**" ]
+        }
+      ],
+      ["@semantic-release/npm", {
           "npmPublish": true
         }
       ]
