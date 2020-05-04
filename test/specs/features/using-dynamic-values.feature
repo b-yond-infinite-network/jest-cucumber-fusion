@@ -9,3 +9,4 @@ Feature: Getting rich writing software
     Given my account name is 'a'
     When I get an new account name 'name' with a type Test from my old account named 'a'
     Then my account name should be "name" and have a type Test
+
