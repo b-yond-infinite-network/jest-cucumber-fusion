@@ -183,9 +183,9 @@ function findStep( scenarioType, scenarioSentence, isOutline ) {
     
     exprMatches.shift()
     
-    const dynamicMatchThatAreVariables = exprMatches.filter( ( currentMatch ) => {
-        return foundStep.indexOf( currentMatch ) === -1
-    } )
+    const dynamicMatchThatAreVariables = exprMatches //exprMatches.filter( ( currentMatch ) => {
+    //     return foundStep.indexOf( currentMatch ) === -1
+    // } )
 
     return {
         stepExpression: stepObject.stepRegExp,

@@ -1,6 +1,8 @@
 class BankAccount {
     constructor() {
         this.balance = 0;
+        this.name = '';
+        this.type = 'Account'
     }
     
     deposit(amount) {
