@@ -204,7 +204,7 @@ function isPotentialStepFunctionForScenario( scenarioDefinition, regStepFunc ){
 }
 
 function evaluateStepFuncEndVsScenarioEnd( stepFunctionDef, scenarioDefinition ) {
-    if( /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.test( stepFunctionDef ) ){
+    if( /\(.*(\?\:)?[.\\]*[sSdDwWbB*][*?+]?.*\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.test( stepFunctionDef ) ){
         return new RegExp( stepFunctionDef ).test( scenarioDefinition )
     }
     
