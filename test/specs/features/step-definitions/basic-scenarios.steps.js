@@ -26,6 +26,13 @@ Then( 'the rocket should end up in space', () => {
     expect(rocket.isInSpace).toBe(true)
 } )
 
+/// Complex Regex :  at position (\[(?: *\d+(?: |, |,)*)+\]) with no value
+And( /^my position in 2D space is (\[(?: *\d+(?: |, |,)*)+\])$/, function( arrayPosition ) {
+    
+    const isAnArray = JSON.parse( arrayPosition )
+    expect( isAnArray ).toBeInstanceOf( Array )
+} )
+
 And( /^the booster\(s\) should land back on the launch pad$/, () => {
     expect(rocket.boostersLanded).toBe(true)
 } )

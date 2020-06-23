@@ -20,3 +20,9 @@ Feature: Rocket Launching
     Then the rocket should end up in space
     And the booster(s) should land back on the launch pad
     But nobody should doubt me ever again
+
+  Scenario: Folding ourselves in 2D
+    Given I am Elon Musk attempting to launch a rocket into space
+    And  my position in 2D space is [ 0, 2 ]
+    When I launch the rocket
+    Then the rocket should end up in space
