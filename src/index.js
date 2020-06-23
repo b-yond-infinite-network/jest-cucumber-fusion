@@ -91,80 +91,129 @@ function matchJestTestSuiteWithCucumberFeature( featureScenariosOrOutline, befor
 function matchJestTestWithCucumberScenario( currentScenarioTitle, currentScenarioSteps, testFn, isOutline ){
     testFn( currentScenarioTitle, ( { given, when, then, and, but } ) => {
         currentScenarioSteps.forEach( ( currentStep ) => {
-            // if( !stepsDefinition[ currentStep.keyword ] )
-            //     return
 
             matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStep.keyword, currentStep.stepText, isOutline )
+
         } )
     } )
 }
 
-function matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStepKeyWork, currentStepText, isOutline ){
-    const foundMatchingStep = findStep( currentStepKeyWork, currentStepText, isOutline )
-    if( !foundMatchingStep )
-        return
-
-    switch ( currentStepKeyWork ) {
-        case "given":
-            given( foundMatchingStep.stepExpression, foundMatchingStep.stepFn  )
-            break
-
-        case "when":
-            when( foundMatchingStep.stepExpression, foundMatchingStep.stepFn  )
-            break
-
-        case "then":
-            then( foundMatchingStep.stepExpression, foundMatchingStep.stepFn  )
-            break
-
-        case "but":
-            but( foundMatchingStep.stepExpression, foundMatchingStep.stepFn  )
-            break
-
-        case "and":
-        default:
-            and( foundMatchingStep.stepExpression, foundMatchingStep.stepFn  )
-            break
-    }
+function matchJestDefinitionWithCucumberStep( verbFunction, currentStepKeyword, currentStepText, isOutline ){
+    
+    const foundMatchingStep = findMatchingStep( currentStepKeyword, currentStepText, isOutline )
+    if( !foundMatchingStep ) return
+    
+    // this will be the "given", "when", "then"...functions
+    verbFunction[ currentStepKeyword ] ( foundMatchingStep.stepExpression, foundMatchingStep.stepFn )
 }
 
-function findStep( scenarioType, scenarioSentence, isOutline ) {
-    // if( !stepsDefinition[ scenarioType ] )
-    //     return null
 
-    const foundStep = Object.keys( stepsDefinition[ scenarioType ] ).find( ( currentSentence ) => {
-        if( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp ){
-            if( isOutline && /<[\w]*>/.test( scenarioSentence ) ){
-                const cleanedSentence = scenarioSentence.replace( /<[\w]*>/gi, '' )
-                const cleanedRegexp = stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp.source
-                                                                                        .replace( /^\^/, '' )
-                                                                                        .replace( /\\\(/g, '(' )
-                                                                                        .replace( /\\\)/g, ')')
-                                                                                        .replace( /\\\^/g, '^')
-                                                                                        .replace( /\\\$/g, '$')
-                                                                                        .replace( /\$$/, '' )
-                                                                                        .replace( /\([.\\]+[sSdDwWbB*][*?+]?\)/g, '')
-                                                                                        .replace( /\(\[.*\](?:[+?*]{1}|\{\d\})\)/g, '' )
-                
-                // const groupInStepDef = new RegExp( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp.source + '|' ).exec('')
-                // const numGroupInStepDef = groupInStepDef.length - 1
-                // const groupInSentence = /(<[\w]*>)|/gm.exec( scenarioSentence )
-                // const numGroupInSentence = /(<[\w]*>)|/gm.exec( scenarioSentence ).length - 1
-                //check that we have the same number of capture group than enclosed variables in the expression
-                return cleanedRegexp === cleanedSentence
-            }
+function findMatchingStep( scenarioType, scenarioSentence, isOutline ) {
+    const foundStep = Object.keys( stepsDefinition[ scenarioType ] )
+                            .find( ( currentStepDefinitionFunction ) => {
+                                return isFunctionForScenario( scenarioSentence,
+                                                              stepsDefinition[ scenarioType ][ currentStepDefinitionFunction ],
+                                                              isOutline )
+                            } )
+    if( !foundStep ) return null
+    
+    return injectVariable( scenarioType, scenarioSentence, foundStep )
+}
 
-            else
-                return scenarioSentence.match( stepsDefinition[ scenarioType ][ currentSentence ].stepRegExp )
-
+function isFunctionForScenario( scenarioSentence, stepDefinitionFunction, isOutline ){
+    if( stepDefinitionFunction.stepRegExp ){
+        if( isOutline && /<[\w]*>/.test( scenarioSentence ) ){
+            return isPotentialStepFunctionForScenario( scenarioSentence, stepDefinitionFunction.stepRegExp )
         }
         
-        return scenarioSentence === stepsDefinition[ scenarioType ][ currentSentence ].stepExpression
-    } )
-    if( !foundStep )
-        return null
+        else return scenarioSentence.match( stepDefinitionFunction.stepRegExp )
+    }
+    
+    return scenarioSentence === stepDefinitionFunction.stepExpression
+}
 
-    const stepObject = stepsDefinition[ scenarioType ][ foundStep ]
+
+function isPotentialStepFunctionForScenario( scenarioDefinition, regStepFunc ){
+    //so this one is tricky, to ensure we only find the
+    // step definition corresponding to actual steps function in the case of outlined gherkin
+    // we have to "disable" the outlining (since it can replace regular expression
+    // and then ensure that all "non-outlined" part do respect the regular expression of
+    // of the step function
+    // FIRST, we clean the string version of the step definition that has outline variable
+    const cleanedStepFunc   = regStepFunc.source
+                                         .replace( /^\^/, '' )
+                                         // .replace( /\\\(/g, '(' )
+                                         // .replace( /\\\)/g, ')')
+                                         // .replace( /\\\^/g, '^')
+                                         // .replace( /\\\$/g, '$')
+                                         .replace( /\$$/, '' )
+                                         // .replace( /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g, '' )
+    
+    let currentScenarioPart
+    let currentStepFuncLeft     = cleanedStepFunc
+    let currentScenarioDefLeft  = scenarioDefinition
+    
+    //we step through each of the scenario outline variables
+    // from there, we will try to detect any regexp present in the
+    // step definition, so that we can ensure to find the right match
+    while( ( currentScenarioPart = /<[\w]*>/gi.exec( currentScenarioDefLeft ) ) != null ){
+        
+        let fixedPart           = currentScenarioPart.input.substring( 0, currentScenarioPart.index )
+        let idxCutScenarioPart  = currentScenarioPart.index + currentScenarioPart[ 0 ].length
+        
+        const regEscapedStepFunc = /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.exec( currentStepFuncLeft.replace( /\\\(/g, '(' )
+                                                                                                                         .replace( /\\\)/g, ')')
+                                                                                                                         .replace( /\\\^/g, '^')
+                                                                                                                         .replace( /\\\$/g, '$') )
+        const regStepFuncLeft   = /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.exec( currentStepFuncLeft )
+        
+        if( regStepFuncLeft && regEscapedStepFunc.index == currentScenarioPart.index ){
+            //if we have a regex inside our step function definition
+            // and that regex is at the same position than our Outlined variable
+            // we just need to check that the sentence match,
+            // so we can "evaluate" the step function and remove the regex in it
+            currentStepFuncLeft = regEscapedStepFunc.input.substring( 0, regEscapedStepFunc.index )
+                                  + currentStepFuncLeft.substring( regStepFuncLeft.index + regStepFuncLeft[ 0 ].length )
+            
+        }
+        else if( regStepFuncLeft && regStepFuncLeft.index < currentScenarioPart.index ){
+            //if we have a regex inside our step function definition
+            // but that regex is not at the same position than our outlined variable
+            // we need to evaluate the regex against the scenario part
+            const strRegexToEvaluate = regStepFuncLeft.input.substring( 0, regStepFuncLeft.index + regStepFuncLeft[ 0 ].length )
+            const regexToEvaluate = new RegExp( strRegexToEvaluate )
+            const regIntermediatePart   = regexToEvaluate.exec( currentScenarioPart.input )
+            if( regIntermediatePart ){
+                fixedPart           = regStepFuncLeft.input.substring( 0, regStepFuncLeft.index + regStepFuncLeft[ 0 ].length )
+                idxCutScenarioPart  = regIntermediatePart[ 0 ].length
+            }
+        }
+    
+        const partIndex = currentStepFuncLeft.indexOf( fixedPart )
+        if( partIndex !== -1 ){
+            currentStepFuncLeft     = currentStepFuncLeft.substring( partIndex + fixedPart.length )
+            currentScenarioDefLeft  = currentScenarioDefLeft.substring( idxCutScenarioPart )
+        }
+        else {
+            return false
+        }
+    }
+    
+    return ( currentScenarioDefLeft === '' && currentStepFuncLeft === '' )
+           || evaluateStepFuncEndVsScenarioEnd( currentStepFuncLeft, currentScenarioDefLeft )
+}
+
+function evaluateStepFuncEndVsScenarioEnd( stepFunctionDef, scenarioDefinition ) {
+    if( /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.test( stepFunctionDef ) ){
+        return new RegExp( stepFunctionDef ).test( scenarioDefinition )
+    }
+    
+    return stepFunctionDef.endsWith( scenarioDefinition )
+}
+
+
+function injectVariable( scenarioType, scenarioSentence, stepFunctionDefinition ){
+    const stepObject = stepsDefinition[ scenarioType ][ stepFunctionDefinition ]
     
     if( !stepObject.stepRegExp )
         return {
@@ -186,7 +235,7 @@ function findStep( scenarioType, scenarioSentence, isOutline ) {
     const dynamicMatchThatAreVariables = exprMatches //exprMatches.filter( ( currentMatch ) => {
     //     return foundStep.indexOf( currentMatch ) === -1
     // } )
-
+    
     return {
         stepExpression: stepObject.stepRegExp,
         stepFn:         () => ( stepObject.stepFn( ...dynamicMatchThatAreVariables ) )
