@@ -12,6 +12,16 @@ When( 'I launch the rocket', () => {
     rocket.launch()
 } )
 
+
+When( 'I launch the \'<rocket>\'', () => {
+    rocket.launch()
+} )
+
+When( /^I launch my personal rocket named '(.*)'$/, function ( nameRocket ) {
+    expect( nameRocket ).toBeDefined()
+    rocket.launch()
+} );
+
 Then( 'the rocket should end up in space', () => {
     expect(rocket.isInSpace).toBe(true)
 } )
