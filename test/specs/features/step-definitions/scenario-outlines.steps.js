@@ -85,5 +85,9 @@ Then( /^I should still get \$(\d+)$/, expectedSalesPrice => {
     expect(salesPrice).toBe(parseInt(expectedSalesPrice))
 } )
 
+Then( /^the (\d+)(?:th|d|nd|rd|st) item (\d+)(?:th|d|nd|rd|st) price has a price amount of (\d+) which is a '(\w*)'$/,
+    ( indexItem, indexPrice, amountPrice, typePrice ) => {
+    expect(salesPrice).toBe( parseInt( amountPrice ) )
+} )
 
 Fusion( '../scenario-outlines.feature' )

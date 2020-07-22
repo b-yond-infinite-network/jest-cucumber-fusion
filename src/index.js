@@ -160,12 +160,12 @@ function isPotentialStepFunctionForScenario( scenarioDefinition, regStepFunc ){
         
         let fixedPart           = currentScenarioPart.input.substring( 0, currentScenarioPart.index )
         let idxCutScenarioPart  = currentScenarioPart.index + currentScenarioPart[ 0 ].length
-        
-        const regEscapedStepFunc = /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.exec( currentStepFuncLeft.replace( /\\\(/g, '(' )
-                                                                                                                         .replace( /\\\)/g, ')')
-                                                                                                                         .replace( /\\\^/g, '^')
-                                                                                                                         .replace( /\\\$/g, '$') )
-        const regStepFuncLeft   = /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.exec( currentStepFuncLeft )
+    
+        const regEscapedStepFunc = /\([a-zA-Z0!|,:?*+.^=${}><\\\-]+\)/g.exec( currentStepFuncLeft.replace( /\\\(/g, '(' )
+                                                                                                 .replace( /\\\)/g, ')')
+                                                                                                 .replace( /\\\^/g, '^')
+                                                                                                 .replace( /\\\$/g, '$') )
+        const regStepFuncLeft   = /\([a-zA-Z0!|,:?*+.^=${}><\\\-]+\)/g.exec( currentStepFuncLeft )
         
         if( regStepFuncLeft && regEscapedStepFunc.index == currentScenarioPart.index ){
             //if we have a regex inside our step function definition
