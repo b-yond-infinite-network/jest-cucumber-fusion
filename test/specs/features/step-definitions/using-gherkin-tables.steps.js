@@ -22,7 +22,8 @@ When( 'I add the following task:', table => {
     });
 });
 
-Then( 'I should see the following todo list:', table => {
+Then( /^I should see the following (\d) todos in my list:$/, (nbre, table) => {
+    expect(todoList.items.length).toBe(parseInt(nbre))
     expect(todoList.items.length).toBe(table.length)
 
     table.forEach((row, index) => {

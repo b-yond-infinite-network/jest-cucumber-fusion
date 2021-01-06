@@ -92,23 +92,24 @@ function matchJestTestWithCucumberScenario( currentScenarioTitle, currentScenari
     testFn( currentScenarioTitle, ( { given, when, then, and, but } ) => {
         currentScenarioSteps.forEach( ( currentStep ) => {
 
-            matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStep.keyword, currentStep.stepText, isOutline )
+            matchJestDefinitionWithCucumberStep( { given, when, then, and, but }, currentStep, isOutline )
 
         } )
     } )
 }
 
-function matchJestDefinitionWithCucumberStep( verbFunction, currentStepKeyword, currentStepText, isOutline ){
-    
-    const foundMatchingStep = findMatchingStep( currentStepKeyword, currentStepText, isOutline )
+function matchJestDefinitionWithCucumberStep( verbFunction, currentStep, isOutline ){
+    const foundMatchingStep = findMatchingStep( currentStep, isOutline )
     if( !foundMatchingStep ) return
     
     // this will be the "given", "when", "then"...functions
-    verbFunction[ currentStepKeyword ] ( foundMatchingStep.stepExpression, foundMatchingStep.stepFn )
+    verbFunction[ currentStep.keyword ] ( foundMatchingStep.stepExpression, foundMatchingStep.stepFn )
 }
 
 
-function findMatchingStep( scenarioType, scenarioSentence, isOutline ) {
+function findMatchingStep( currentStep, isOutline ) {
+    const scenarioType = currentStep.keyword
+    const scenarioSentence = currentStep.stepText
     const foundStep = Object.keys( stepsDefinition[ scenarioType ] )
                             .find( ( currentStepDefinitionFunction ) => {
                                 return isFunctionForScenario( scenarioSentence,
@@ -116,8 +117,8 @@ function findMatchingStep( scenarioType, scenarioSentence, isOutline ) {
                                                               isOutline )
                             } )
     if( !foundStep ) return null
-    
-    return injectVariable( scenarioType, scenarioSentence, foundStep )
+
+    return injectVariable( scenarioType, scenarioSentence, foundStep, currentStep.stepArgument )
 }
 
 function isFunctionForScenario( scenarioSentence, stepDefinitionFunction, isOutline ){
@@ -212,7 +213,8 @@ function evaluateStepFuncEndVsScenarioEnd( stepFunctionDef, scenarioDefinition )
 }
 
 
-function injectVariable( scenarioType, scenarioSentence, stepFunctionDefinition ){
+function injectVariable( scenarioType, scenarioSentence, stepFunctionDefinition , stepArgs){
+
     const stepObject = stepsDefinition[ scenarioType ][ stepFunctionDefinition ]
     
     if( !stepObject.stepRegExp )
@@ -229,13 +231,18 @@ function injectVariable( scenarioType, scenarioSentence, stepFunctionDefinition 
             stepExpression:     stepObject.stepRegExp,
             stepFn:             stepObject.stepFn
         }
-    
-    exprMatches.shift()
-    
-    const dynamicMatchThatAreVariables = exprMatches //exprMatches.filter( ( currentMatch ) => {
-    //     return foundStep.indexOf( currentMatch ) === -1
-    // } )
-    
+
+    const dynamicMatchThatAreVariables = []
+
+    exprMatches.forEach((match, groupIndex) => {
+        if(groupIndex > 0)
+            dynamicMatchThatAreVariables.push(match)
+    });
+
+    if(Array.isArray(stepArgs) && stepArgs.length > 0){
+        dynamicMatchThatAreVariables.push(stepArgs)
+    }
+
     return {
         stepExpression: stepObject.stepRegExp,
         stepFn:         () => ( stepObject.stepFn( ...dynamicMatchThatAreVariables ) )
