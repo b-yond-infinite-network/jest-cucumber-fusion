@@ -1,0 +1,21 @@
+{
+    "cucumberautocomplete.formatConfOverride": {
+        "Functionaliteit:": 0,
+        "Voorbeeld:": 1,
+        "Scenario:": 1,
+        "Achtergrond:": 1,
+        "Abstract Scenario:": 1,
+        "Voorbeelden:": 2,
+        "Gegeven": 2,
+        "Wanneer": 2,
+        "Als": 2,
+        "Dan": 2,
+        "En": 2,
+        "Maar": 2,
+        "\\*": 2,
+        "\\|": 3,
+        "\"\"\"": 3,
+        "#": "relative",
+        "@": "relative",
+    }
+}
