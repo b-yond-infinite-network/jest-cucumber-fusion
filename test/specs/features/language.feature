@@ -31,7 +31,6 @@ Functionaliteit: Online verkopen
             | Object                               |
             | Autographed Neil deGrasse Tyson book |
             | Rick Astley t-shirt                  |
-        # TODO: Wanneer werkt nog niet
         Als ik de volgende producten toevoeg:
             | Object            |
             | Smurfen stripboek |
