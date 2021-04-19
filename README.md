@@ -162,3 +162,4 @@ Since we're using jest, it is very easy to generate the code coverage of your Cu
   * [Re-using step definitions](./docs/ReusingStepDefinitions.md)  
   * [Configuration options](./docs/AdditionalConfiguration.md)
   * [Running the examples](./docs/RunningTheExamples.md)
+  * [Language](./docs/Language.md)
