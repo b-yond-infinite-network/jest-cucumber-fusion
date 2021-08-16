@@ -239,7 +239,7 @@ function injectVariable( scenarioType, scenarioSentence, stepFunctionDefinition 
             dynamicMatchThatAreVariables.push(match)
     });
 
-    if(Array.isArray(stepArgs) && stepArgs.length > 0){
+    if((Array.isArray(stepArgs) && stepArgs.length > 0) || typeof stepArgs === 'string'){
         dynamicMatchThatAreVariables.push(stepArgs)
     }
 
