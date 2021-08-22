@@ -1,32 +1,34 @@
 Feature: Getting rich writing software
 
-  # Scenario: Depositing a paycheck
-  #   Given I open new account with 'Cash' name
-  #   Given my account#1 balance is $10
-  #   When I get paid $1000000 for writing some awesome code from my account#1
-  #   Then my account#1 balance should be $1000010
+  Scenario: Depositing a paycheck
+    Given I open new account with 'Cash' name
+    Given my account#1 balance is $10
+    When I get paid $1000000 for writing some awesome code from my account#1
+    Then my account#1 balance should be $1000010
 
-  # Scenario: Testing simple inception
-  #   Given I open new account with 'Cash' name
-  #   Given my account#1 name is 'a'
-  #   When I get an new account#1 name 'name' with a type Test from my old account named 'a'
-  #   Then my account#1 name should be "name" and have a type Test
+  Scenario: Testing simple inception
+    Given I open new account with 'Cash' name
+    Given my account#1 name is 'a'
+    When I get an new account#1 name 'name' with a type Test from my old account named 'a'
+    Then my account#1 name should be "name" and have a type Test
 
-  Scenario Outline: Testing mix examples and tables
+  Scenario Outline: Using examples in step RegExp and step Table at the same time. <Description>
     Given I open new account with 'Cash' name
     Given I open new account with 'Deposit' name
 
-    Given my account#1 balance is $<balance1>
-    Given my account#2 balance is $<balance2>
+    Given my account#1 balance is $10000
+    Given my account#2 balance is $1234
 
     Then I have <NAccounts> accounts
 
-    Then my account#1 should be:
-    | field   | value      |
-    | name    | Cash       |
-    | balance | <balance1> |
-    | type    | Account    |
+    # Use test step with parameter in step RegExp and paramter in step Table
+    Then my account#<accN> should be:
+      | field   | value      |
+      | name    | Cash       |
+      | balance | <balance>  |
+      | type    | Account    |
 
   Examples:
-      | NAccounts | balance1 | balance2 |
-      | 2         | 10000    | 1234     |
+    | NAccounts | accN | balance | Description     |
+    | 2         | 1    | 10000   | First Scenario  |
+    | 2         | 2    | 1234    | Second Scenario |
