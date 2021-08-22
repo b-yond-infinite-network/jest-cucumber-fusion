@@ -124,7 +124,23 @@ const matchJestTestSuiteWithCucumberFeature = (
 
     matchJestTestWithCucumberScenario(
       currentScenarioOrOutline.title,
-      currentScenarioOrOutline.steps,
+
+      // when scenario outline table contains examples then jest-cucumber.loadFeature
+      //  calculates scenario parameters and place them into currentScenarioOrOutline.scenarios[0].steps
+      // at the same time currentScenarioOrOutline.steps contains pure steps without 
+      //  example substutions for example if the scenario outline looks like:
+      //   Scenario Outline: test scenario
+      //     Given Step sentence
+      //       | field     |
+      //       | <exmaple> |
+      //   Examples:
+      //     | example |
+      //     | myValue |
+      //  then currentScenarioOrOutline.steps will contain {field: '<example>'}
+      //  and at the same time currentScenarioOrOutline.scenarios[0].steps will contain {field: 'myValue'}
+      currentScenarioOrOutline.scenarios != null
+        ? currentScenarioOrOutline.scenarios[0].steps
+        : currentScenarioOrOutline.steps,
       testFn,
       isOutline
     );
