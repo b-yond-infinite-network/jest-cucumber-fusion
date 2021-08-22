@@ -8,7 +8,8 @@
     "test": "jest --color",
     "coverage": "codecov",
     "commit": "git-cz",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "fmt": "npx prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "codecov": "~4.0.0-0",
     "cz-conventional-changelog": "^3.3.0",
+    "prettier": "2.3.2",
     "semantic-release": "^17.4.3"
   },
   "publishConfig": {

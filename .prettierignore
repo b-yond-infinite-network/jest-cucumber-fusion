@@ -1,0 +1,16 @@
+# Ignore artifacts:
+.git
+.github
+build
+coverage
+docs
+node_modules
+
+.gitignore
+.npmignore
+.prettierignore
+.prettierrc.json
+LICENSE
+package.json
+package-lock.json
+README.md
