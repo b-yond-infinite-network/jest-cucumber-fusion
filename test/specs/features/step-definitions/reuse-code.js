@@ -4,7 +4,7 @@ And("I drop my mic", () => {
   const micDropped = true;
 });
 
-module.exports = exports = function (fnRocket) {
+module.exports = exports = (fnRocket) => {
   When("I relaunch the rocket", () => {
     const rocketUsed = fnRocket();
     rocketUsed.launch();

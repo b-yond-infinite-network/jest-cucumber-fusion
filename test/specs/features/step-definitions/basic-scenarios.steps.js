@@ -16,7 +16,7 @@ When("I launch the '<rocket>'", () => {
   rocket.launch();
 });
 
-When(/^I launch my personal rocket named '(.*)'$/, function (nameRocket) {
+When(/^I launch my personal rocket named '(.*)'$/, (nameRocket) => {
   expect(nameRocket).toBeDefined();
   rocket.launch();
 });
@@ -28,7 +28,7 @@ Then("the rocket should end up in space", () => {
 /// Complex Regex :  at position (\[(?: *\d+(?: |, |,)*)+\]) with no value
 And(
   /^my position in 2D space is (\[(?: *\d+(?: |, |,)*)+\])$/,
-  function (arrayPosition) {
+  (arrayPosition) => {
     const isAnArray = JSON.parse(arrayPosition);
     expect(isAnArray).toBeInstanceOf(Array);
   }
