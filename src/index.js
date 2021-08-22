@@ -1,6 +1,6 @@
 const stepsDefinition = { given: {}, when: {}, then: {}, and: {}, but: {}, before: null, after: null  }
 
-function addDefinitionFunction( definitionType, regexpSentence, fnForDefinition ){
+const addDefinitionFunction = ( definitionType, regexpSentence, fnForDefinition ) => {
     if( stepsDefinition[ definitionType ] ){
         if( regexpSentence.constructor === RegExp )
             stepsDefinition[ definitionType ][ regexpSentence.source ] = {
@@ -17,24 +17,24 @@ function addDefinitionFunction( definitionType, regexpSentence, fnForDefinition 
     }
 }
 
-function Given( regexpSentenceOrChainedObject, fnForDefinition ){
+const Given = ( regexpSentenceOrChainedObject, fnForDefinition ) => {
     return defineAndChain( "given", regexpSentenceOrChainedObject, fnForDefinition )
 }
-function When( regexpSentenceOrChainedObject, fnForDefinition ){
+const When = ( regexpSentenceOrChainedObject, fnForDefinition ) => {
     return defineAndChain( "when", regexpSentenceOrChainedObject, fnForDefinition )
 }
-function Then( regexpSentenceOrChainedObject, fnForDefinition ){
+const Then = ( regexpSentenceOrChainedObject, fnForDefinition ) => {
     return defineAndChain( "then", regexpSentenceOrChainedObject, fnForDefinition )
 }
-function And( regexpSentenceOrChainedObject, fnForDefinition ){
+const And = ( regexpSentenceOrChainedObject, fnForDefinition ) => {
     return defineAndChain( "and", regexpSentenceOrChainedObject, fnForDefinition )
 }
 
-function But( regexpSentenceOrChainedObject, fnForDefinition ){
+const But = ( regexpSentenceOrChainedObject, fnForDefinition ) => {
     return defineAndChain( "but", regexpSentenceOrChainedObject, fnForDefinition )
 }
 
-function defineAndChain( stepType, stepObjectOrSentence, fnForStep ){
+const defineAndChain = ( stepType, stepObjectOrSentence, fnForStep ) =>{
     if( !fnForStep
         && stepObjectOrSentence instanceof Object
         && Object.prototype.toString.call( stepObjectOrSentence ) !== '[object RegExp]'
@@ -52,10 +52,10 @@ function defineAndChain( stepType, stepObjectOrSentence, fnForStep ){
                 stepFnDefinition: fnForStep }
 }
 
-function Before( fnDefinition ){ stepsDefinition.before = fnDefinition }
-function After( fnDefinition ){ stepsDefinition.after = fnDefinition }
+const Before = ( fnDefinition ) => { stepsDefinition.before = fnDefinition }
+const After = ( fnDefinition ) => { stepsDefinition.after = fnDefinition }
 
-function Fusion( featureFileToLoad, optionsToPassToJestCucumber ) {
+const Fusion = ( featureFileToLoad, optionsToPassToJestCucumber ) => {
     const path          = require( 'path' )
     const callerSites   = require("callsites" )
     const callerSiteCaller = callerSites.default()[ 1 ].getFileName()
@@ -75,7 +75,7 @@ function Fusion( featureFileToLoad, optionsToPassToJestCucumber ) {
     } )
 }
 
-function matchJestTestSuiteWithCucumberFeature( featureScenariosOrOutline, beforeEachFn, afterEachFn, testFn, isOutline ){
+const matchJestTestSuiteWithCucumberFeature = ( featureScenariosOrOutline, beforeEachFn, afterEachFn, testFn, isOutline ) => {
     featureScenariosOrOutline.forEach( ( currentScenarioOrOutline )  => {
 
         if( stepsDefinition.before )
@@ -88,7 +88,7 @@ function matchJestTestSuiteWithCucumberFeature( featureScenariosOrOutline, befor
     } )
 }
 
-function matchJestTestWithCucumberScenario( currentScenarioTitle, currentScenarioSteps, testFn, isOutline ){
+const matchJestTestWithCucumberScenario = ( currentScenarioTitle, currentScenarioSteps, testFn, isOutline ) => {
     testFn( currentScenarioTitle, ( { given, when, then, and, but } ) => {
         currentScenarioSteps.forEach( ( currentStep ) => {
 
@@ -98,7 +98,7 @@ function matchJestTestWithCucumberScenario( currentScenarioTitle, currentScenari
     } )
 }
 
-function matchJestDefinitionWithCucumberStep( verbFunction, currentStep, isOutline ){
+const matchJestDefinitionWithCucumberStep = ( verbFunction, currentStep, isOutline ) => {
     const foundMatchingStep = findMatchingStep( currentStep, isOutline )
     if( !foundMatchingStep ) return
     
@@ -106,8 +106,7 @@ function matchJestDefinitionWithCucumberStep( verbFunction, currentStep, isOutli
     verbFunction[ currentStep.keyword ] ( foundMatchingStep.stepExpression, foundMatchingStep.stepFn )
 }
 
-
-function findMatchingStep( currentStep, isOutline ) {
+const findMatchingStep = ( currentStep, isOutline ) => {
     const scenarioType = currentStep.keyword
     const scenarioSentence = currentStep.stepText
     const foundStep = Object.keys( stepsDefinition[ scenarioType ] )
@@ -121,7 +120,7 @@ function findMatchingStep( currentStep, isOutline ) {
     return injectVariable( scenarioType, scenarioSentence, foundStep, currentStep.stepArgument )
 }
 
-function isFunctionForScenario( scenarioSentence, stepDefinitionFunction, isOutline ){
+const isFunctionForScenario = ( scenarioSentence, stepDefinitionFunction, isOutline ) => {
     if( stepDefinitionFunction.stepRegExp ){
         if( isOutline && /<[\w]*>/.test( scenarioSentence ) ){
             return isPotentialStepFunctionForScenario( scenarioSentence, stepDefinitionFunction.stepRegExp )
@@ -133,8 +132,7 @@ function isFunctionForScenario( scenarioSentence, stepDefinitionFunction, isOutl
     return scenarioSentence === stepDefinitionFunction.stepExpression
 }
 
-
-function isPotentialStepFunctionForScenario( scenarioDefinition, regStepFunc ){
+const isPotentialStepFunctionForScenario = ( scenarioDefinition, regStepFunc ) => {
     //so this one is tricky, to ensure we only find the
     // step definition corresponding to actual steps function in the case of outlined gherkin
     // we have to "disable" the outlining (since it can replace regular expression
@@ -204,7 +202,7 @@ function isPotentialStepFunctionForScenario( scenarioDefinition, regStepFunc ){
            || evaluateStepFuncEndVsScenarioEnd( currentStepFuncLeft, currentScenarioDefLeft )
 }
 
-function evaluateStepFuncEndVsScenarioEnd( stepFunctionDef, scenarioDefinition ) {
+const evaluateStepFuncEndVsScenarioEnd = ( stepFunctionDef, scenarioDefinition ) => {
     if( /\(.*(\?\:)?[.\\]*[sSdDwWbB*][*?+]?.*\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.test( stepFunctionDef ) ){
         return new RegExp( stepFunctionDef ).test( scenarioDefinition )
     }
@@ -212,8 +210,7 @@ function evaluateStepFuncEndVsScenarioEnd( stepFunctionDef, scenarioDefinition )
     return stepFunctionDef.endsWith( scenarioDefinition )
 }
 
-
-function injectVariable( scenarioType, scenarioSentence, stepFunctionDefinition , stepArgs){
+const injectVariable = ( scenarioType, scenarioSentence, stepFunctionDefinition , stepArgs) => {
 
     const stepObject = stepsDefinition[ scenarioType ][ stepFunctionDefinition ]
     
