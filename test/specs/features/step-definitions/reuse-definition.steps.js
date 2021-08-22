@@ -1,21 +1,22 @@
-const { Given, Then, And, Fusion } = require( '../../../../src' )
+const { Given, Then, And, Fusion } = require("../../../../src");
 
-const { Rocket } = require( '../../../src/rocket' )
+const { Rocket } = require("../../../src/rocket");
 
-let rocket
+let rocket;
 function getCurrentRocket() {
-	return rocket
+  return rocket;
 }
 
-Given( /^I am Elon Musk and I launched a rocket in space already$/, () => {
-	rocket = new Rocket()
-} )
+Given(/^I am Elon Musk and I launched a rocket in space already$/, () => {
+  rocket = new Rocket();
+});
 
+require("./reuse-code")(getCurrentRocket);
 
-require( './reuse-code' )( getCurrentRocket )
+Then(
+  And(/^the mission was said to be '(.*)'$/, (sayingForTheMission) => {
+    expect(sayingForTheMission).toBeDefined();
+  })
+);
 
-Then( And( /^the mission was said to be '(.*)'$/, ( sayingForTheMission ) => {
-	expect( sayingForTheMission ).toBeDefined( )
-} ) )
-
-Fusion( '../reuse-definition.feature' )
+Fusion("../reuse-definition.feature");
