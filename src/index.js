@@ -130,7 +130,7 @@ const matchJestTestSuiteWithCucumberFeature = (
       //   Scenario Outline: test scenario
       //     Given Step sentence
       //       | field     |
-      //       | <exmaple> |
+      //       | <example> |
       //   Examples:
       //     | example |
       //     | myValue |
