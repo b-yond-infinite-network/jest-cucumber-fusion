@@ -106,8 +106,7 @@ const Fusion = (featureFileToLoad, optionsToPassToJestCucumber) => {
         feature.scenarioOutlines,
         beforeEach,
         afterEach,
-        testFn,
-        true
+        testFn
       );
   });
 };
@@ -116,8 +115,7 @@ const matchJestTestSuiteWithCucumberFeature = (
   featureScenariosOrOutline,
   beforeEachFn,
   afterEachFn,
-  testFn,
-  isOutline
+  testFn
 ) => {
   featureScenariosOrOutline.forEach((currentScenarioOrOutline) => {
     if (stepsDefinition.before) beforeEachFn(stepsDefinition.before);
@@ -141,8 +139,7 @@ const matchJestTestSuiteWithCucumberFeature = (
       currentScenarioOrOutline.scenarios != null
         ? currentScenarioOrOutline.scenarios[0].steps
         : currentScenarioOrOutline.steps,
-      testFn,
-      isOutline
+      testFn
     );
 
     if (stepsDefinition.after) afterEachFn(stepsDefinition.after);
@@ -152,26 +149,20 @@ const matchJestTestSuiteWithCucumberFeature = (
 const matchJestTestWithCucumberScenario = (
   currentScenarioTitle,
   currentScenarioSteps,
-  testFn,
-  isOutline
+  testFn
 ) => {
   testFn(currentScenarioTitle, ({ given, when, then, and, but }) => {
     currentScenarioSteps.forEach((currentStep) => {
       matchJestDefinitionWithCucumberStep(
         { given, when, then, and, but },
-        currentStep,
-        isOutline
+        currentStep
       );
     });
   });
 };
 
-const matchJestDefinitionWithCucumberStep = (
-  verbFunction,
-  currentStep,
-  isOutline
-) => {
-  const foundMatchingStep = findMatchingStep(currentStep, isOutline);
+const matchJestDefinitionWithCucumberStep = (verbFunction, currentStep) => {
+  const foundMatchingStep = findMatchingStep(currentStep);
   if (!foundMatchingStep) return;
 
   // this will be the "given", "when", "then"...functions
@@ -181,15 +172,14 @@ const matchJestDefinitionWithCucumberStep = (
   );
 };
 
-const findMatchingStep = (currentStep, isOutline) => {
+const findMatchingStep = (currentStep) => {
   const scenarioType = currentStep.keyword;
   const scenarioSentence = currentStep.stepText;
   const foundStep = Object.keys(stepsDefinition[scenarioType]).find(
     (currentStepDefinitionFunction) => {
       return isFunctionForScenario(
         scenarioSentence,
-        stepsDefinition[scenarioType][currentStepDefinitionFunction],
-        isOutline
+        stepsDefinition[scenarioType][currentStepDefinitionFunction]
       );
     }
   );
@@ -203,11 +193,7 @@ const findMatchingStep = (currentStep, isOutline) => {
   );
 };
 
-const isFunctionForScenario = (
-  scenarioSentence,
-  stepDefinitionFunction,
-  isOutline
-) =>
+const isFunctionForScenario = (scenarioSentence, stepDefinitionFunction) =>
   stepDefinitionFunction.stepRegExp
     ? scenarioSentence.match(stepDefinitionFunction.stepRegExp)
     : scenarioSentence === stepDefinitionFunction.stepExpression;
