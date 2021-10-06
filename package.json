@@ -1,6 +1,6 @@
 {
-  "name": "jest-cucumber-fusion",
-  "version": "0.0.0-semantically-released",
+  "name": "@sashkeer/jest-cucumber-fusion",
+  "version": "0.0.1",
   "description": "Write cucumber test as part of a jest run (including coverage)",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -77,5 +77,9 @@
     ],
     "coverageDirectory": "./coverage/",
     "collectCoverage": true
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
   }
 }
