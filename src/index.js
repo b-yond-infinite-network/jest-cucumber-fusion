@@ -106,7 +106,8 @@ const Fusion = (featureFileToLoad, optionsToPassToJestCucumber) => {
         feature.scenarioOutlines,
         beforeEach,
         afterEach,
-        testFn
+        testFn,
+        true
       );
   });
 };
@@ -115,31 +116,17 @@ const matchJestTestSuiteWithCucumberFeature = (
   featureScenariosOrOutline,
   beforeEachFn,
   afterEachFn,
-  testFn
+  testFn,
+  isOutline
 ) => {
   featureScenariosOrOutline.forEach((currentScenarioOrOutline) => {
     if (stepsDefinition.before) beforeEachFn(stepsDefinition.before);
 
     matchJestTestWithCucumberScenario(
       currentScenarioOrOutline.title,
-
-      // when scenario outline table contains examples then jest-cucumber.loadFeature
-      //  calculates scenario parameters and place them into currentScenarioOrOutline.scenarios[0].steps
-      // at the same time currentScenarioOrOutline.steps contains pure steps without
-      //  example substutions for example if the scenario outline looks like:
-      //   Scenario Outline: test scenario
-      //     Given Step sentence
-      //       | field     |
-      //       | <example> |
-      //   Examples:
-      //     | example |
-      //     | myValue |
-      //  then currentScenarioOrOutline.steps will contain {field: '<example>'}
-      //  and at the same time currentScenarioOrOutline.scenarios[0].steps will contain {field: 'myValue'}
-      currentScenarioOrOutline.scenarios != null
-        ? currentScenarioOrOutline.scenarios[0].steps
-        : currentScenarioOrOutline.steps,
-      testFn
+      currentScenarioOrOutline.steps,
+      testFn,
+      isOutline
     );
 
     if (stepsDefinition.after) afterEachFn(stepsDefinition.after);
@@ -149,20 +136,26 @@ const matchJestTestSuiteWithCucumberFeature = (
 const matchJestTestWithCucumberScenario = (
   currentScenarioTitle,
   currentScenarioSteps,
-  testFn
+  testFn,
+  isOutline
 ) => {
   testFn(currentScenarioTitle, ({ given, when, then, and, but }) => {
     currentScenarioSteps.forEach((currentStep) => {
       matchJestDefinitionWithCucumberStep(
         { given, when, then, and, but },
-        currentStep
+        currentStep,
+        isOutline
       );
     });
   });
 };
 
-const matchJestDefinitionWithCucumberStep = (verbFunction, currentStep) => {
-  const foundMatchingStep = findMatchingStep(currentStep);
+const matchJestDefinitionWithCucumberStep = (
+  verbFunction,
+  currentStep,
+  isOutline
+) => {
+  const foundMatchingStep = findMatchingStep(currentStep, isOutline);
   if (!foundMatchingStep) return;
 
   // this will be the "given", "when", "then"...functions
@@ -172,14 +165,15 @@ const matchJestDefinitionWithCucumberStep = (verbFunction, currentStep) => {
   );
 };
 
-const findMatchingStep = (currentStep) => {
+const findMatchingStep = (currentStep, isOutline) => {
   const scenarioType = currentStep.keyword;
   const scenarioSentence = currentStep.stepText;
   const foundStep = Object.keys(stepsDefinition[scenarioType]).find(
     (currentStepDefinitionFunction) => {
       return isFunctionForScenario(
         scenarioSentence,
-        stepsDefinition[scenarioType][currentStepDefinitionFunction]
+        stepsDefinition[scenarioType][currentStepDefinitionFunction],
+        isOutline
       );
     }
   );
@@ -193,10 +187,142 @@ const findMatchingStep = (currentStep) => {
   );
 };
 
-const isFunctionForScenario = (scenarioSentence, stepDefinitionFunction) =>
-  stepDefinitionFunction.stepRegExp
-    ? scenarioSentence.match(stepDefinitionFunction.stepRegExp)
-    : scenarioSentence === stepDefinitionFunction.stepExpression;
+const isFunctionForScenario = (
+  scenarioSentence,
+  stepDefinitionFunction,
+  isOutline
+) => {
+  if (stepDefinitionFunction.stepRegExp) {
+    if (isOutline && /<[\w]*>/.test(scenarioSentence)) {
+      return isPotentialStepFunctionForScenario(
+        scenarioSentence,
+        stepDefinitionFunction.stepRegExp
+      );
+    } else return scenarioSentence.match(stepDefinitionFunction.stepRegExp);
+  }
+
+  return scenarioSentence === stepDefinitionFunction.stepExpression;
+};
+
+const isPotentialStepFunctionForScenario = (
+  scenarioDefinition,
+  regStepFunc
+) => {
+  //so this one is tricky, to ensure we only find the
+  // step definition corresponding to actual steps function in the case of outlined gherkin
+  // we have to "disable" the outlining (since it can replace regular expression
+  // and then ensure that all "non-outlined" part do respect the regular expression of
+  // of the step function
+  // FIRST, we clean the string version of the step definition that has outline variable
+  const cleanedStepFunc = regStepFunc.source
+    .replace(/^\^/, "")
+    // .replace( /\\\(/g, '(' )
+    // .replace( /\\\)/g, ')')
+    // .replace( /\\\^/g, '^')
+    // .replace( /\\\$/g, '$')
+    .replace(/\$$/, "");
+  // .replace( /\([.\\]+[sSdDwWbB*][*?+]?\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g, '' )
+
+  let currentScenarioPart;
+  let currentStepFuncLeft = cleanedStepFunc;
+  let currentScenarioDefLeft = scenarioDefinition;
+
+  //we step through each of the scenario outline variables
+  // from there, we will try to detect any regexp present in the
+  // step definition, so that we can ensure to find the right match
+  while (
+    (currentScenarioPart = /<[\w]*>/gi.exec(currentScenarioDefLeft)) != null
+  ) {
+    let fixedPart = currentScenarioPart.input.substring(
+      0,
+      currentScenarioPart.index
+    );
+    let idxCutScenarioPart =
+      currentScenarioPart.index + currentScenarioPart[0].length;
+
+    const regEscapedStepFunc = /\([a-zA-Z0!|,:?*+.^=${}><\\\-]+\)/g.exec(
+      currentStepFuncLeft
+        .replace(/\\\(/g, "(")
+        .replace(/\\\)/g, ")")
+        .replace(/\\\^/g, "^")
+        .replace(/\\\$/g, "$")
+    );
+    const regStepFuncLeft = /\([a-zA-Z0!|,:?*+.^=${}><\\\-]+\)/g.exec(
+      currentStepFuncLeft
+    );
+
+    if (
+      regStepFuncLeft &&
+      regEscapedStepFunc.index == currentScenarioPart.index
+    ) {
+      //if we have a regex inside our step function definition
+      // and that regex is at the same position than our Outlined variable
+      // we just need to check that the sentence match,
+      // so we can "evaluate" the step function and remove the regex in it
+      currentStepFuncLeft =
+        regEscapedStepFunc.input.substring(0, regEscapedStepFunc.index) +
+        currentStepFuncLeft.substring(
+          regStepFuncLeft.index + regStepFuncLeft[0].length
+        );
+    } else if (
+      regStepFuncLeft &&
+      regStepFuncLeft.index < currentScenarioPart.index
+    ) {
+      //if we have a regex inside our step function definition
+      // but that regex is not at the same position than our outlined variable
+      // we need to evaluate the regex against the scenario part
+      const strRegexToEvaluate = regStepFuncLeft.input.substring(
+        0,
+        regStepFuncLeft.index + regStepFuncLeft[0].length
+      );
+      const regexToEvaluate = new RegExp(strRegexToEvaluate);
+      const regIntermediatePart = regexToEvaluate.exec(
+        currentScenarioPart.input
+      );
+      if (regIntermediatePart) {
+        fixedPart = regStepFuncLeft.input.substring(
+          0,
+          regStepFuncLeft.index + regStepFuncLeft[0].length
+        );
+        idxCutScenarioPart = regIntermediatePart[0].length;
+      }
+    }
+
+    const partIndex = currentStepFuncLeft.indexOf(fixedPart);
+    if (partIndex !== -1) {
+      currentStepFuncLeft = currentStepFuncLeft.substring(
+        partIndex + fixedPart.length
+      );
+      currentScenarioDefLeft =
+        currentScenarioDefLeft.substring(idxCutScenarioPart);
+    } else {
+      return false;
+    }
+  }
+
+  return (
+    (currentScenarioDefLeft === "" && currentStepFuncLeft === "") ||
+    evaluateStepFuncEndVsScenarioEnd(
+      currentStepFuncLeft,
+      currentScenarioDefLeft
+    )
+  );
+};
+
+const evaluateStepFuncEndVsScenarioEnd = (
+  stepFunctionDef,
+  scenarioDefinition
+) => {
+  if (
+    /\(.*(\?\:)?[.\\]*[sSdDwWbB*][*?+]?.*\)|\(\[.*\](?:[+?*]{1}|\{\d\})\)/g.test(
+      stepFunctionDef
+    )
+  ) {
+    return new RegExp(stepFunctionDef).test(scenarioDefinition);
+  }
+
+  return stepFunctionDef.endsWith(scenarioDefinition);
+};
 
 const injectVariable = (
   scenarioType,

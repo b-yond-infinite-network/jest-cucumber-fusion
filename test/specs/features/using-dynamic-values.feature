@@ -23,12 +23,12 @@ Feature: Getting rich writing software
 
     # Use test step with parameter in step RegExp and paramter in step Table
     Then my account#<accN> should be:
-      | field   | value      |
-      | name    | Cash       |
-      | balance | <balance>  |
-      | type    | Account    |
+      | field   | value     |
+      | name    | <Type>    |
+      | balance | <balance> |
+      | type    | Account   |
 
-  Examples:
-    | NAccounts | accN | balance | Description     |
-    | 2         | 1    | 10000   | First Scenario  |
-    | 2         | 2    | 1234    | Second Scenario |
+    Examples:
+      | NAccounts | accN | Type    | balance | Description     |
+      | 2         | 1    | Cash    | 10000   | First Scenario  |
+      | 2         | 2    | Deposit | 1234    | Second Scenario |
