@@ -9,9 +9,13 @@ class OnlineSales {
     this.listedItems = [];
   }
 
+  nItems = () => this.listedItems.length;
+
   listItem(name) {
     this.listedItems.push(name);
   }
+
+  buyItem = (name) => this.listedItems.push(name);
 
   sellItem(name) {
     const itemIndex = this.listedItems.indexOf(name);
