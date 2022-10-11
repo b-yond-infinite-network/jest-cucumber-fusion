@@ -30,7 +30,7 @@
     "codecov": "~4.0.0-0",
     "cz-conventional-changelog": "^3.3.0",
     "prettier": "2.3.2",
-    "semantic-release": "^17.4.3"
+    "semantic-release": "^19.0.3"
   },
   "publishConfig": {
     "access": "public"
